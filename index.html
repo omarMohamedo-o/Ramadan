@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رمضان كريم</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --night:#06061a; --card:#0f0d28;
+  --gold:#f0c040; --gold-l:#ffe899; --gold-d:#a86808;
+  --glow:rgba(240,192,64,.75);
+}
+
+body{
+  background:var(--night); min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-family:'Amiri',serif; overflow:hidden; position:relative;
+}
+
+/* ── STARS ── */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;background:#fff8e0;border-radius:50%;opacity:0;
+      animation:twinkle var(--dur) var(--del) ease-in-out infinite alternate}
+@keyframes twinkle{
+  0%  {opacity:.04;transform:scale(.65)}
+  100%{opacity:1;  transform:scale(1.45)}
+}
+
+/* ── MOSQUE — rises at 3.8s ── */
+.mosque{
+  position:fixed;bottom:0;left:0;right:0;z-index:1;
+  display:flex;justify-content:center;pointer-events:none;
+  opacity:0; animation:mosqueRise 1.8s 3.8s ease-out forwards;
+}
+@keyframes mosqueRise{
+  from{opacity:0;transform:translateY(28px)}
+  to  {opacity:.16;transform:none}
+}
+.mosque svg{width:100vw;max-width:700px}
+
+/* ── CARD — slides up at 0.1s ── */
+.card{
+  position:relative;z-index:2;
+  background:linear-gradient(155deg,#110e2a 0%,#18103c 55%,#0c0a1e 100%);
+  border:1.5px solid rgba(240,192,64,.26);
+  border-radius:30px; padding:34px 52px 46px; width:380px;
+  display:flex;flex-direction:column;align-items:center;
+  box-shadow:0 0 70px rgba(240,192,64,.09),0 0 140px rgba(90,50,200,.13);
+  opacity:0; animation:cardIn 1s .1s cubic-bezier(.22,.68,0,1.2) forwards;
+}
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(70px) scale(.91)}
+  to  {opacity:1;transform:none}
+}
+/* border breathing after load */
+.card::before{
+  content:'';position:absolute;inset:-1px;border-radius:30px;
+  border:1px solid rgba(240,192,64,0);pointer-events:none;
+  animation:borderPulse 4s 3.5s ease-in-out infinite alternate;
+}
+@keyframes borderPulse{
+  from{border-color:rgba(240,192,64,.06);box-shadow:0 0 20px rgba(240,192,64,.04)}
+  to  {border-color:rgba(240,192,64,.38);box-shadow:0 0 55px rgba(240,192,64,.16),inset 0 0 28px rgba(240,192,64,.04)}
+}
+
+/* ── CORNER ORNAMENTS — bloom in from 0.9s ── */
+.orn{position:absolute;width:36px;height:36px;opacity:0}
+.orn svg{width:100%;height:100%}
+.orn.tl{top:12px;left:12px;   animation:ornBloom .7s .9s ease-out forwards}
+.orn.tr{top:12px;right:12px;  animation:ornBloom .7s 1.05s ease-out forwards}
+.orn.bl{bottom:12px;left:12px;animation:ornBloom .7s 1.2s ease-out forwards}
+.orn.br{bottom:12px;right:12px;animation:ornBloom .7s 1.35s ease-out forwards}
+@keyframes ornBloom{
+  from{opacity:0;transform:scale(.3) rotate(60deg)}
+  to  {opacity:.42;transform:none}
+}
+
+/* ── CRESCENT — drops & bounces at 0.5s ── */
+.crescent-wrap{
+  margin-bottom:16px; opacity:0;
+  animation:moonDrop 1s .5s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes moonDrop{
+  from{opacity:0;transform:translateY(-55px) rotate(-25deg)}
+  to  {opacity:1;transform:none}
+}
+.crescent{width:46px;height:46px;position:relative;display:inline-block}
+.crescent::before{
+  content:'';position:absolute;inset:0;background:var(--gold);border-radius:50%;
+  box-shadow:0 0 18px var(--glow),0 0 40px rgba(240,192,64,.32);
+  animation:moonGlow 3.5s 1.8s ease-in-out infinite alternate;
+}
+.crescent::after{
+  content:'';position:absolute;top:-3px;left:9px;
+  width:40px;height:40px;background:#18103c;border-radius:50%;
+}
+@keyframes moonGlow{
+  from{box-shadow:0 0 12px var(--glow),0 0 28px rgba(240,192,64,.2)}
+  to  {box-shadow:0 0 30px var(--glow),0 0 65px rgba(240,192,64,.52)}
+}
+
+/* ══════════════════════════════════════
+   PENDULUM SYSTEM
+   .pivot      → rotation ONLY  (starts after drop at 1.8s)
+   .pivot-drop → translateY ONLY (drop at 0.7s)
+   .lantern    → visual, hangs from pivot
+══════════════════════════════════════ */
+.pivot{
+  position:relative; width:1px; height:1px; margin-bottom:216px;
+  transform-origin:center top;
+  animation:outerSwing 3.2s 1.8s cubic-bezier(.37,0,.63,1) infinite;
+}
+@keyframes outerSwing{
+  0%  {transform:rotate(-20deg)}
+  50% {transform:rotate( 20deg)}
+  100%{transform:rotate(-20deg)}
+}
+.pivot-drop{
+  display:flex;flex-direction:column;align-items:center;
+  animation:dropIn 1.1s .7s cubic-bezier(.22,.68,0,1.2) both;
+}
+@keyframes dropIn{
+  from{opacity:0;transform:translateY(-380px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+.lantern{
+  position:absolute;top:0;left:50%;
+  transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;
+}
+
+/* string */
+.string{width:2px;height:40px;background:linear-gradient(to bottom,var(--gold-d),var(--gold));border-radius:1px}
+
+/* top cap */
+.cap{
+  width:72px;height:14px;
+  background:linear-gradient(180deg,var(--gold) 0%,var(--gold-d) 100%);
+  border-radius:6px 6px 0 0; box-shadow:0 2px 9px rgba(0,0,0,.5);
+  position:relative;
+}
+.cap::before{
+  content:'';position:absolute;left:50%;transform:translateX(-50%);
+  top:-8px;width:9px;height:9px;background:var(--gold);border-radius:50%;
+  box-shadow:0 0 10px var(--glow);
+}
+.cap::after{
+  content:'';position:absolute;left:50%;transform:translateX(-50%);
+  bottom:-6px;width:58px;height:10px;background:var(--gold-d);border-radius:0 0 5px 5px;
+}
+
+/* body */
+.body{position:relative;width:96px;height:142px;overflow:visible}
+.body::before,.body::after{
+  content:'';position:absolute;left:0;right:0;height:12px;
+  background:linear-gradient(180deg,var(--gold) 0%,var(--gold-d) 100%);
+  border-radius:3px;z-index:3;box-shadow:0 2px 5px rgba(0,0,0,.35);
+}
+.body::before{top:0}.body::after{bottom:0}
+
+/* panels */
+.panels{position:absolute;inset:12px 0;display:flex;overflow:hidden}
+.panel{
+  flex:1;
+  background:linear-gradient(180deg,
+    rgba(255,215,80,.72) 0%,
+    rgba(255,140,30,.62) 55%,
+    rgba(185,75,12,.66) 100%);
+  position:relative;overflow:hidden;
+  animation:panelFlicker 1.2s ease-in-out infinite alternate;
+}
+.panel:nth-child(1){animation-delay:0s}
+.panel:nth-child(2){animation-delay:.20s}
+.panel:nth-child(3){animation-delay:.40s}
+.panel:nth-child(4){animation-delay:.60s}
+@keyframes panelFlicker{
+  0%  {filter:brightness(.60) saturate(.75)}
+  35% {filter:brightness(1.05) saturate(1.15)}
+  65% {filter:brightness(.80) saturate(.95)}
+  100%{filter:brightness(1.50) saturate(1.55)}
+}
+.panel::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(255,255,200,.22) 0%,transparent 45%,rgba(255,255,200,.10) 100%);
+}
+.panel:not(:last-child){border-right:2.5px solid var(--gold-d)}
+
+/* bars */
+.bar{
+  position:absolute;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--gold) 0%,var(--gold-d) 100%);
+  z-index:4;box-shadow:0 0 6px rgba(240,192,64,.38);
+}
+.bar:nth-child(3){left:23px}
+.bar:nth-child(4){left:46px}
+.bar:nth-child(5){left:69px}
+
+/* inner glow */
+.body-glow{
+  position:absolute;inset:0;z-index:1;
+  background:radial-gradient(ellipse at 50% 62%,rgba(255,195,65,.82) 0%,transparent 68%);
+  border-radius:2px;
+  animation:innerFlicker .75s ease-in-out infinite alternate;
+}
+@keyframes innerFlicker{
+  0%  {opacity:.38;transform:scale(.92)}
+  30% {opacity:.82;transform:scale(1.03)}
+  65% {opacity:.52;transform:scale(.96)}
+  100%{opacity:1;  transform:scale(1.08)}
+}
+
+/* floor glow */
+.floor-glow{
+  position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);
+  width:230px;height:85px;
+  background:radial-gradient(ellipse,rgba(255,185,55,.44) 0%,transparent 70%);
+  pointer-events:none;
+  animation:glowBreath 1.5s ease-in-out infinite alternate;
+}
+@keyframes glowBreath{
+  from{opacity:.48;transform:translateX(-50%) scaleX(.86)}
+  to  {opacity:1;  transform:translateX(-50%) scaleX(1.14)}
+}
+
+/* bottom cap */
+.bot{
+  width:72px;height:16px;
+  background:linear-gradient(180deg,var(--gold-d) 0%,var(--gold) 100%);
+  border-radius:0 0 10px 10px; box-shadow:0 5px 12px rgba(0,0,0,.46);
+  position:relative;
+}
+.bot::after{
+  content:'';position:absolute;left:50%;transform:translateX(-50%);
+  bottom:-10px;width:4px;height:10px;background:var(--gold);border-radius:2px;
+}
+
+/* tassels — counter-swing to outerSwing */
+.tassel{margin-top:10px;display:flex;gap:5px;justify-content:center}
+.ts{
+  width:2.5px;border-radius:1px;
+  background:linear-gradient(to bottom,var(--gold),transparent);
+  animation:tasselSwing 3.2s cubic-bezier(.37,0,.63,1) 1.8s infinite;
+}
+@keyframes tasselSwing{
+  0%  {transform:rotate( 18deg)}
+  50% {transform:rotate(-18deg)}
+  100%{transform:rotate( 18deg)}
+}
+.ts:nth-child(1){height:16px;animation-delay:1.82s}
+.ts:nth-child(2){height:23px;animation-delay:1.80s}
+.ts:nth-child(3){height:20px;animation-delay:1.78s}
+.ts:nth-child(4){height:23px;animation-delay:1.84s}
+.ts:nth-child(5){height:16px;animation-delay:1.81s}
+
+/* sparkles */
+.sp{
+  position:absolute;width:5px;height:5px;background:var(--gold-l);opacity:0;
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  animation:sparkle var(--d) var(--sd) ease-in-out infinite;
+}
+@keyframes sparkle{
+  0%,100%{opacity:0;transform:scale(.35) translateY(0)}
+  45%,55%{opacity:.95;transform:scale(1.35) translateY(-18px)}
+}
+
+/* ── DIVIDER — expands at 2.5s ── */
+.divider{
+  width:82%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  margin:20px 0 16px; opacity:0;
+  animation:dividerReveal 1.2s 2.5s ease-out forwards;
+}
+@keyframes dividerReveal{
+  from{opacity:0;transform:scaleX(.1)}
+  to  {opacity:.75;transform:scaleX(1)}
+}
+
+/* ── GREETING — cinematic reveal at 2.7s ── */
+.greeting{
+  font-size:2.6rem;font-weight:700;color:var(--gold);
+  text-align:center;direction:rtl;line-height:1.3;
+  text-shadow:0 0 22px rgba(240,192,64,.7),0 0 55px rgba(240,192,64,.4),0 0 90px rgba(240,160,30,.2);
+  opacity:0;
+  animation:greetingReveal 2.4s 2.7s cubic-bezier(.22,.68,0,1.2) forwards;
+}
+@keyframes greetingReveal{
+  0%  {
+    opacity:0;letter-spacing:-.20em;
+    filter:blur(18px) brightness(4.5);
+    text-shadow:0 0 90px rgba(255,225,80,1),0 0 160px rgba(240,160,30,.9);
+  }
+  30% {
+    opacity:1;letter-spacing:.12em;
+    filter:blur(4px) brightness(3);
+    text-shadow:0 0 55px rgba(255,235,100,1),0 0 110px rgba(240,192,64,1);
+  }
+  62% {
+    letter-spacing:.04em;
+    filter:blur(.8px) brightness(1.5);
+    text-shadow:0 0 32px rgba(240,192,64,.9),0 0 70px rgba(240,192,64,.5);
+  }
+  100%{
+    opacity:1;letter-spacing:.02em;
+    filter:blur(0) brightness(1);
+    text-shadow:0 0 22px rgba(240,192,64,.7),0 0 55px rgba(240,192,64,.4),0 0 90px rgba(240,160,30,.2);
+  }
+}
+/* gentle breathing glow after reveal settles */
+@keyframes greetingBreath{
+  from{text-shadow:0 0 18px rgba(240,192,64,.55),0 0 45px rgba(240,192,64,.3)}
+  to  {text-shadow:0 0 32px rgba(240,192,64,.9), 0 0 75px rgba(240,192,64,.55),0 0 110px rgba(240,160,30,.3)}
+}
+/* apply breathing after greetingReveal ends (~5.1s) */
+.greeting.breathing{animation:greetingBreath 2.8s ease-in-out infinite alternate}
+
+/* ── SUB TEXT — stagger at 4.2s / 4.7s ── */
+.sub{
+  font-size:1.05rem;color:rgba(240,192,64,.65);
+  text-align:center;font-style:italic;
+  display:flex;flex-direction:column;gap:4px;margin-top:10px;
+}
+.sub span:nth-child(1){opacity:0;animation:slideIn 1s 4.2s cubic-bezier(.34,1.56,.64,1) forwards}
+.sub span:nth-child(2){opacity:0;animation:slideIn 1s 4.7s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(16px);filter:blur(5px)}
+  to  {opacity:1;transform:none;filter:blur(0)}
+}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<!-- Mosque silhouette -->
+<div class="mosque">
+  <svg viewBox="0 0 700 180" fill="none">
+    <ellipse cx="350" cy="95" rx="82" ry="72" fill="#f0c040"/>
+    <rect x="268" y="95" width="164" height="85" fill="#f0c040"/>
+    <rect x="168" y="46" width="22" height="134" fill="#f0c040"/>
+    <polygon points="168,46 179,16 190,46" fill="#f0c040"/>
+    <ellipse cx="179" cy="46" rx="12" ry="5" fill="#f0c040"/>
+    <rect x="510" y="46" width="22" height="134" fill="#f0c040"/>
+    <polygon points="510,46 521,16 532,46" fill="#f0c040"/>
+    <ellipse cx="521" cy="46" rx="12" ry="5" fill="#f0c040"/>
+    <path d="M288 180 Q288 142 308 142 Q328 142 328 180" fill="#06061a"/>
+    <path d="M334 180 Q334 142 350 142 Q366 142 366 180" fill="#06061a"/>
+    <path d="M372 180 Q372 142 392 142 Q412 142 412 180" fill="#06061a"/>
+  </svg>
+</div>
+
+<div class="card">
+
+  <div class="orn tl"><svg viewBox="0 0 40 40"><path d="M2 2L18 2L18 6L6 6L6 18L2 18Z" fill="#f0c040"/><circle cx="22" cy="22" r="3" fill="#f0c040" opacity=".6"/></svg></div>
+  <div class="orn tr"><svg viewBox="0 0 40 40"><path d="M2 2L18 2L18 6L6 6L6 18L2 18Z" fill="#f0c040"/><circle cx="22" cy="22" r="3" fill="#f0c040" opacity=".6"/></svg></div>
+  <div class="orn bl"><svg viewBox="0 0 40 40"><path d="M2 2L18 2L18 6L6 6L6 18L2 18Z" fill="#f0c040"/><circle cx="22" cy="22" r="3" fill="#f0c040" opacity=".6"/></svg></div>
+  <div class="orn br"><svg viewBox="0 0 40 40"><path d="M2 2L18 2L18 6L6 6L6 18L2 18Z" fill="#f0c040"/><circle cx="22" cy="22" r="3" fill="#f0c040" opacity=".6"/></svg></div>
+
+  <div class="crescent-wrap"><div class="crescent"></div></div>
+
+  <!-- PENDULUM -->
+  <div class="pivot">
+    <div class="pivot-drop">
+      <div class="lantern">
+
+        <div class="sp" style="--d:2.6s;--sd:2.0s;top:44px; left:-36px"></div>
+        <div class="sp" style="--d:3.1s;--sd:2.4s;top:32px; right:-34px"></div>
+        <div class="sp" style="--d:2.3s;--sd:3.0s;top:102px;left:-40px"></div>
+        <div class="sp" style="--d:2.9s;--sd:2.6s;top:98px; right:-36px"></div>
+        <div class="sp" style="--d:3.4s;--sd:3.4s;top:160px;left:-32px"></div>
+        <div class="sp" style="--d:2.1s;--sd:3.8s;top:154px;right:-34px"></div>
+
+        <div class="string"></div>
+        <div class="cap"></div>
+
+        <div class="body">
+          <div class="body-glow"></div>
+          <div class="panels">
+            <div class="panel"></div>
+            <div class="panel"></div>
+            <div class="panel"></div>
+            <div class="panel"></div>
+          </div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="floor-glow"></div>
+        </div>
+
+        <div class="bot"></div>
+
+        <div class="tassel">
+          <div class="ts"></div>
+          <div class="ts"></div>
+          <div class="ts"></div>
+          <div class="ts"></div>
+          <div class="ts"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="greeting" id="greeting">رمضان كريم</div>
+  <div class="sub">
+    <span>Ramadan Mubarak</span>
+    <span>كل عام وأنتم بخير</span>
+  </div>
+
+</div>
+
+<script>
+// Stars
+const wrap = document.getElementById('stars');
+for (let i = 0; i < 140; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const sz = (Math.random() * 2.6 + .55).toFixed(2);
+  s.style.cssText =
+    `width:${sz}px;height:${sz}px;` +
+    `top:${(Math.random()*100).toFixed(2)}%;` +
+    `left:${(Math.random()*100).toFixed(2)}%;` +
+    `--dur:${(1.3+Math.random()*3.8).toFixed(2)}s;` +
+    `--del:${(Math.random()*7).toFixed(2)}s`;
+  wrap.appendChild(s);
+}
+
+// Switch greeting to breathing glow after reveal finishes (2.7s delay + 2.4s dur = 5.1s)
+setTimeout(() => {
+  const g = document.getElementById('greeting');
+  g.style.animation = 'none';
+  g.style.opacity   = '1';
+  g.style.letterSpacing = '.02em';
+  g.style.filter    = 'none';
+  void g.offsetWidth; // reflow
+  g.classList.add('breathing');
+}, 5200);
+</script>
+</body>
+</html>
